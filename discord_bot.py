@@ -96,8 +96,8 @@ class NFTScraper:
             if driver:
                 driver.quit()
 
-def get_nft_data():
-    """Get NFT data with caching"""
+async def get_nft_data():
+    """Get NFT data with caching (async version)"""
     global nft_cache, cache_timestamp
     current_time = time.time()
     
@@ -105,9 +105,12 @@ def get_nft_data():
     if current_time - cache_timestamp < CACHE_DURATION and nft_cache:
         return nft_cache
     
-    # Scrape new data
+    # Scrape new data in a thread to avoid blocking the event loop
+    loop = asyncio.get_event_loop()
     scraper = NFTScraper()
-    nft_cache = scraper.scrape_nfts()
+    
+    # Run the scraping in a thread executor to avoid event loop conflicts
+    nft_cache = await loop.run_in_executor(None, scraper.scrape_nfts)
     cache_timestamp = current_time
     
     return nft_cache
@@ -134,7 +137,7 @@ async def search_nft(ctx, *, search_term: str = None):
     """Search for NFTs by name"""
     await ctx.send("🔍 Fetching NFT data... This may take a moment.")
     
-    nfts = get_nft_data()
+    nfts = await get_nft_data()
     
     if not nfts:
         await ctx.send("❌ Failed to fetch NFT data. Please try again later.")
@@ -198,7 +201,7 @@ async def get_nft_price(ctx, *, nft_name: str):
     """Get the exact price of a specific NFT"""
     await ctx.send("🔍 Searching for NFT price...")
     
-    nfts = get_nft_data()
+    nfts = await get_nft_data()
     
     if not nfts:
         await ctx.send("❌ Failed to fetch NFT data. Please try again later.")
@@ -243,7 +246,7 @@ async def nft_stats(ctx):
     """Get marketplace statistics"""
     await ctx.send("📊 Calculating marketplace statistics...")
     
-    nfts = get_nft_data()
+    nfts = await get_nft_data()
     
     if not nfts:
         await ctx.send("❌ Failed to fetch NFT data. Please try again later.")
@@ -334,9 +337,10 @@ async def buscar(interaction: discord.Interaction, nombre_item: str):
     """Slash command to search for NFT items by name"""
     await interaction.response.defer()  # Let Discord know we're processing
     
-    # Use the scraper directly with search term
+    # Use the scraper directly with search term in a thread
+    loop = asyncio.get_event_loop()
     scraper = NFTScraper()
-    matches = scraper.scrape_nfts(nombre_item)
+    matches = await loop.run_in_executor(None, scraper.scrape_nfts, nombre_item)
     
     if not matches:
         embed = discord.Embed(
@@ -403,9 +407,10 @@ async def buscar_precio(interaction: discord.Interaction, nombre_item: str, orde
     """Search for NFT items with specific price ordering"""
     await interaction.response.defer()
     
-    # Use the scraper directly with search term
+    # Use the scraper directly with search term in a thread
+    loop = asyncio.get_event_loop()
     scraper = NFTScraper()
-    matches = scraper.scrape_nfts(nombre_item)
+    matches = await loop.run_in_executor(None, scraper.scrape_nfts, nombre_item)
     
     if not matches:
         embed = discord.Embed(
@@ -459,7 +464,7 @@ async def listar_items(interaction: discord.Interaction):
     """List some available items for search reference"""
     await interaction.response.defer()
     
-    nfts = get_nft_data()
+    nfts = await get_nft_data()
     
     if not nfts:
         await interaction.followup.send("❌ Error al obtener datos de NFT. Por favor intenta de nuevo más tarde.")
@@ -489,7 +494,7 @@ async def top_nfts(interaction: discord.Interaction):
     """Slash command to show top 10 most expensive NFTs"""
     await interaction.response.defer()
     
-    nfts = get_nft_data()
+    nfts = await get_nft_data()
     
     if not nfts:
         await interaction.followup.send("❌ Error al obtener datos de NFT. Por favor intenta de nuevo más tarde.")
@@ -522,7 +527,7 @@ async def estadisticas(interaction: discord.Interaction):
     """Slash command to show marketplace statistics"""
     await interaction.response.defer()
     
-    nfts = get_nft_data()
+    nfts = await get_nft_data()
     
     if not nfts:
         await interaction.followup.send("❌ Error al obtener datos de NFT. Por favor intenta de nuevo más tarde.")
