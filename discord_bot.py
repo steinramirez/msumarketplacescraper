@@ -340,7 +340,17 @@ async def buscar(interaction: discord.Interaction, nombre_item: str):
     # Use the scraper directly with search term in a thread
     loop = asyncio.get_event_loop()
     scraper = NFTScraper()
-    matches = await loop.run_in_executor(None, scraper.scrape_nfts, nombre_item)
+    try:
+        matches = await loop.run_in_executor(None, scraper.scrape_nfts, nombre_item)
+    except Exception as e:
+        print(f"Error fetching NFT data: {e}")
+        embed = discord.Embed(
+            title="🔍 Resultados de búsqueda",
+            description=f"Error al obtener datos de NFT. Por favor intenta de nuevo más tarde.",
+            color=0xff0000
+        )
+        await interaction.followup.send(embed=embed)
+        return
     
     if not matches:
         embed = discord.Embed(
@@ -410,7 +420,17 @@ async def buscar_precio(interaction: discord.Interaction, nombre_item: str, orde
     # Use the scraper directly with search term in a thread
     loop = asyncio.get_event_loop()
     scraper = NFTScraper()
-    matches = await loop.run_in_executor(None, scraper.scrape_nfts, nombre_item)
+    try:
+        matches = await loop.run_in_executor(None, scraper.scrape_nfts, nombre_item)
+    except Exception as e:
+        print(f"Error fetching NFT data: {e}")
+        embed = discord.Embed(
+            title="🔍 Resultados de búsqueda",
+            description=f"Error al obtener datos de NFT. Por favor intenta de nuevo más tarde.",
+            color=0xff0000
+        )
+        await interaction.followup.send(embed=embed)
+        return
     
     if not matches:
         embed = discord.Embed(
@@ -464,7 +484,12 @@ async def listar_items(interaction: discord.Interaction):
     """List some available items for search reference"""
     await interaction.response.defer()
     
-    nfts = await get_nft_data()
+    try:
+        nfts = await get_nft_data()
+    except Exception as e:
+        print(f"Error fetching NFT data: {e}")
+        await interaction.followup.send("❌ Error al obtener datos de NFT. Por favor intenta de nuevo más tarde.")
+        return
     
     if not nfts:
         await interaction.followup.send("❌ Error al obtener datos de NFT. Por favor intenta de nuevo más tarde.")
@@ -494,7 +519,12 @@ async def top_nfts(interaction: discord.Interaction):
     """Slash command to show top 10 most expensive NFTs"""
     await interaction.response.defer()
     
-    nfts = await get_nft_data()
+    try:
+        nfts = await get_nft_data()
+    except Exception as e:
+        print(f"Error fetching NFT data: {e}")
+        await interaction.followup.send("❌ Error al obtener datos de NFT. Por favor intenta de nuevo más tarde.")
+        return
     
     if not nfts:
         await interaction.followup.send("❌ Error al obtener datos de NFT. Por favor intenta de nuevo más tarde.")
@@ -527,7 +557,12 @@ async def estadisticas(interaction: discord.Interaction):
     """Slash command to show marketplace statistics"""
     await interaction.response.defer()
     
-    nfts = await get_nft_data()
+    try:
+        nfts = await get_nft_data()
+    except Exception as e:
+        print(f"Error fetching NFT data: {e}")
+        await interaction.followup.send("❌ Error al obtener datos de NFT. Por favor intenta de nuevo más tarde.")
+        return
     
     if not nfts:
         await interaction.followup.send("❌ Error al obtener datos de NFT. Por favor intenta de nuevo más tarde.")
