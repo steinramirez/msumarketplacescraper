@@ -40,8 +40,7 @@ pip install -r requirements.txt
    - Replace `your_discord_bot_token_here` with your actual bot token
    - Example `.env` file:
    ```
-   DISCORD_TOKEN=MTIzNDU2Nzg5MDEyMzQ1Njc4OQ.GhIjKl.MnOpQrStUvWxYzAbCdEfGhIjKlMnOpQrStUvWx
-   CLIENT_ID=1234567890123456789
+  
    ```
 
 4. Invite the bot to your server:
