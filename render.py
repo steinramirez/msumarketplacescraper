@@ -22,8 +22,6 @@ def keep_alive():
         time.sleep(keep_alive_interval)
         print("🔄 Keeping bot alive on Render...")
 
-# End of added keep-alive logic
-
 import discord
 from discord.ext import commands
 from discord import app_commands
@@ -296,7 +294,7 @@ async def nft_stats(ctx):
     max_price = max(prices)
 
     # Find cheapest and most expensive NFTs
-    cheapest = min(nfts, key=lambda x: int(x['price'].replace(',', ''))
+    cheapest = min(nfts, key=lambda x: int(x['price'].replace(',', '')))
     most_expensive = max(nfts, key=lambda x: int(x['price'].replace(',', '')))
 
     embed = discord.Embed(
