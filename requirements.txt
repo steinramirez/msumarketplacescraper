@@ -3,3 +3,4 @@ selenium==4.35.0
 beautifulsoup4==4.13.5
 webdriver-manager==4.0.2
 python-dotenv==1.0.0
+psutil==5.9.8
