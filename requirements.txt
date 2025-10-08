@@ -1,4 +1,4 @@
-pycord==2.4.1
+py-cord==2.4.1
 selenium==4.35.0
 beautifulsoup4==4.13.5
 webdriver-manager==4.0.2
