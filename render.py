@@ -5,11 +5,18 @@ import asyncio
 import json
 import os
 from dotenv import load_dotenv
-import threading
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
+from bs4 import BeautifulSoup
 import time
-import random
+import threading
 
-# Load environment variables
+# Load environment variables from .env file
 load_dotenv()
 
 # Global variables for keep-alive
@@ -21,25 +28,6 @@ def keep_alive():
     while True:
         time.sleep(keep_alive_interval)
         print("🔄 Keeping bot alive on Render...")
-
-import discord
-from discord.ext import commands
-from discord import app_commands
-import asyncio
-import json
-import os
-from dotenv import load_dotenv
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
-from bs4 import BeautifulSoup
-
-# Load environment variables from .env file
-load_dotenv()
 
 # Bot configuration
 intents = discord.Intents.default()
