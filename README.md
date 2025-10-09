@@ -56,6 +56,26 @@ pip install -r requirements.txt
 python discord_bot.py
 ```
 
+## Deployment on Render
+
+### Option 1: Local/Development Run
+```bash
+python discord_bot.py
+```
+
+### Option 2: Render Background Worker
+1. Create a new Render account at https://render.com
+2. Click "New" → "Background Worker"
+3. Connect your GitHub repository
+4. Configure build settings:
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `python render.py`
+5. Add environment variable:
+   - **DISCORD_TOKEN:** Your Discord bot token
+6. Deploy!
+
+**Note:** The `Procfile` and `runtime.txt` are included for proper deployment configuration.
+
 ## How it works
 
 The bot uses Selenium to scrape the MSU marketplace NFT page, extracting:
