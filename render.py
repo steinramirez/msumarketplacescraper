@@ -15,9 +15,21 @@ from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import time
 import threading
+from flask import Flask
 
 # Load environment variables from .env file
 load_dotenv()
+
+# Flask app for health checks (required for Render web service)
+app = Flask(__name__)
+
+@app.route('/')
+def health_check():
+    return {
+        "status": "healthy",
+        "last_interaction": time.time() - last_interaction,
+        "timestamp": time.time()
+    }
 
 # Global variables for keep-alive
 last_interaction = time.time()
@@ -688,6 +700,12 @@ if __name__ == "__main__":
         exit(1)
 
     print("🤖 Starting Discord bot...")
+
+    # Start Flask web server thread for health checks
+    port = int(os.getenv('PORT', 10000))
+    flask_thread = threading.Thread(target=lambda: app.run(debug=False, host='0.0.0.0', port=port, use_reloader=False), daemon=True)
+    flask_thread.start()
+    print(f"🌐 Health check server started on port {port}")
 
     # Start keep-alive thread for Render
     keep_alive_thread = threading.Thread(target=keep_alive, daemon=True)

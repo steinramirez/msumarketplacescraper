@@ -1,1 +1,1 @@
-worker: python render.py
+web: python render.py
