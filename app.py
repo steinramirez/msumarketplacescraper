@@ -69,16 +69,39 @@ try:
     # If no data found, let's see what classes are available
     if len(nft_names) == 0 or len(nft_prices) == 0:
         print("No NFT data found with those classes. Let's check what's available:")
-        all_elements = soup.find_all(class_=True)
-        classes_found = set()
-        for element in all_elements:
-            if element.get('class'):
-                classes_found.update(element.get('class'))
-        
-        print("Available classes (first 20):")
-        for i, class_name in enumerate(list(classes_found)[:20]):
-            print(f"  {class_name}")
-        
+
+        # Check for any elements that might contain price-like data or item names
+        all_text_elements = soup.find_all(['div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'])
+        price_like_elements = []
+        for elem in all_text_elements:
+            text = elem.get_text().strip()
+            # Look for text that might be prices (contain numbers and $ or specific formats)
+            if any(char.isdigit() for char in text):
+                if len(text) < 20:  # Reasonable length for price
+                    price_like_elements.append((elem.get('class'), text))
+
+        print(f"Found {len(price_like_elements)} possible price elements:")
+        for i, (classes, text) in enumerate(price_like_elements[:10]):
+            print(f"  {i+1}. Classes: {classes} - Text: '{text}'")
+
+        # Look for item name-like elements
+        name_like_elements = []
+        for elem in all_text_elements:
+            text = elem.get_text().strip()
+            if (2 <= len(text.split()) <= 5 and  # Reasonable word count for item names
+                not any(char.isdigit() for char in text[:5]) and  # Not starting with numbers
+                len(text) > 3):  # Longer than just symbols
+                name_like_elements.append((elem.get('class'), text))
+
+        print(f"\nFound {len(name_like_elements)} possible item name elements:")
+        for i, (classes, text) in enumerate(name_like_elements[:10]):
+            print(f"  {i+1}. Classes: {classes} - Text: '{text}'")
+
+        # Save page source for manual inspection
+        with open('page_source.html', 'w', encoding='utf-8') as f:
+            f.write(page_source)
+        print("\n💾 Saved page source to 'page_source.html' for manual inspection")
+
         # Let's also check for any elements containing "Card" or "Price"
         card_elements = soup.find_all(class_=lambda x: x and any('card' in cls.lower() or 'price' in cls.lower() for cls in x))
         print(f"\nFound {len(card_elements)} elements with 'card' or 'price' in class name:")

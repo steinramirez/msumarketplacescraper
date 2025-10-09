@@ -28,6 +28,8 @@ A Discord bot that scrapes and provides real-time NFT data from the MSU marketpl
 pip install -r requirements.txt
 ```
 
+**Note:** This project requires Python 3.12 or higher. Make sure you have the correct Python version installed.
+
 2. Create a Discord bot:
    - Go to https://discord.com/developers/applications
    - Create a new application
